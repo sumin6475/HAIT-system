@@ -1,0 +1,34 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Environment files: commit only the .env.example files
+.env
+.env.local
+*.local
+.env.*.bak
+
+# Vite
+client/.vite
+
+# Editors and OS files
+.vscode/
+.idea/
+.DS_Store
+*.sw?
+
+# Local notes and study data: never commit participant data
+docs/
+IRB/
+*.export.json

@@ -1,0 +1,1056 @@
+# Follow-up judge test cases.
+#
+# Question for each case: should Alex reply straight after the last human
+# message? expect: "yes" or "no".
+#
+# Every case is the human message right after an Alex message, the one spot the
+# cooldown (two human messages) would otherwise block. The messages are
+# synthetic, written to match common shapes of group discussion in this task.
+#
+# Base rate: 19 "yes" of 116 (about 16%), so the judge should lean strongly
+# toward "no". A missed "yes" only keeps the default pacing; a false "yes" makes
+# Alex speak too often. Precision therefore matters more than recall. Targets:
+# at most 5 false "yes" on verified negatives, and recall of at least 60%.
+#
+# Fields
+#   named         : the last message names Alex. The rule-based address check
+#                   already handles these, so the judge's own contribution is
+#                   measured on named: false cases.
+#   alex_answered : whether Alex in fact spoke next in that position. A "no"
+#                   case with alex_answered: true is an unverified negative and
+#                   is counted separately, not as a false positive.
+# ---------------------------------------------------------------------
+
+cases:
+  - id: F001
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Hey" }
+      - { speaker: "Member 2", text: "Hi there" }
+      - { speaker: "Alex", text: "Hello everyone, I'm ready whenever you are." }
+      - { speaker: "Member 1", text: "Which candidate do you think is strongest?" }
+    expect: "yes"
+  - id: F002
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Which candidate do you think is strongest?" }
+      - { speaker: "Member 2", text: "Ready here" }
+      - { speaker: "Alex", text: "Happy to start whenever you are, and I'll chime in once we compare them." }
+      - { speaker: "Member 1", text: "right, what's your view?" }
+    expect: "yes"
+  - id: F003
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "right, what's your view?" }
+      - { speaker: "Member 2", text: "For A I have: has a very good sense for recognizing dangerous situations" }
+      - { speaker: "Alex", text: "That fits A for me as well, the very good sense for recognizing dangerous situations seems important for flying." }
+      - { speaker: "Member 1", text: "Does that relate to how we weigh things?" }
+    expect: "yes"
+  - id: F004
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Does that relate to how we weigh things?" }
+      - { speaker: "Member 1", text: "Alex??" }
+      - { speaker: "Alex", text: "Yes, that trait seems very relevant to the role, so A still looks like a good option to me." }
+      - { speaker: "Member 2", text: "Who is your top pick?" }
+    expect: "yes"
+  - id: F005
+    named: true
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "Who is your top pick?" }
+      - { speaker: "Member 1", text: "I have excellent spatial awarness for A" }
+      - { speaker: "Alex", text: "That suits A too, excellent spatial awareness is very useful for a pilot, so A still seems strongest to me so far." }
+      - { speaker: "Member 2", text: "Alex, tell me what you have" }
+    expect: "yes"
+  - id: F006
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "That suits A too, excellent spatial awareness is very useful for a pilot, so A still seems strongest to me so far." }
+      - { speaker: "Member 2", text: "Alex, tell me what you have" }
+      - { speaker: "Alex", text: "A is still my top pick too, the excellent spatial awareness stands out for flying." }
+      - { speaker: "Member 2", text: "What else is on your card" }
+    expect: "yes"
+  - id: F007
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "hi hi" }
+      - { speaker: "Member 2", text: "hey" }
+      - { speaker: "Alex", text: "Hello everyone, I'm ready whenever you are." }
+      - { speaker: "Member 2", text: "Ready here" }
+    expect: "no"
+  - id: F008
+    named: true
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "Ready here" }
+      - { speaker: "Member 1", text: "Which candidate do you think is best?" }
+      - { speaker: "Alex", text: "A is where I lean for now, recognizing dangerous situations and excellent spatial awareness seem very relevant for a pilot." }
+      - { speaker: "Member 2", text: "I have the same things for A as Alex" }
+    expect: "no"
+  - id: F009
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "A is where I lean for now, recognizing dangerous situations and excellent spatial awareness seem very relevant for a pilot." }
+      - { speaker: "Member 2", text: "I have the same things for A as Alex" }
+      - { speaker: "Alex", text: "Yes, A still seems strongest to me, spotting dangerous situations quickly is a real plus." }
+      - { speaker: "Member 1", text: "My card has the same points about him" }
+    expect: "no"
+  - id: F010
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "My card has the same points about him" }
+      - { speaker: "Member 2", text: "and he is very well organized" }
+      - { speaker: "Alex", text: "That makes A look even more solid to me. Does anyone have more on A's downsides, or only the two weak points so far?" }
+      - { speaker: "Member 2", text: "but he isn't open to new ideas, which could be risky" }
+    expect: "no"
+  - id: F011
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "but he isn't open to new ideas, which could be risky" }
+      - { speaker: "Member 1", text: "mine says he doesn't tolerate criticsm well and is a bit hectic" }
+      - { speaker: "Alex", text: "That makes A a little rougher on the people side, though I still like the safety and awareness traits. Anything else on A, or should we compare it with B or D?" }
+      - { speaker: "Member 1", text: "let's collect all of A's pluses and minuses" }
+    expect: "no"
+  - id: F012
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "alex could you list A's pluses and minuses from the chat?" }
+      - { speaker: "Member 2", text: "A has more minuses" }
+      - { speaker: "Alex", text: "From the chat, A's strengths are recognizing dangerous situations, excellent spatial awareness and being very well organized; the weaknesses are being unfriendly, transmitting restlessness, not tolerating criticism and being a bit hectic." }
+      - { speaker: "Member 1", text: "unfriendly and transmits restlessness??" }
+    expect: "no"
+  - id: F013
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "unfriendly and transmits restlessness??" }
+      - { speaker: "Member 2", text: "he's weak at teamwork but his flying skills are great." }
+      - { speaker: "Alex", text: "That is roughly how I see it, A is strong on flying but the teamwork and temperament points are starting to count against it." }
+      - { speaker: "Member 1", text: "i don't know much about pilots, is being cooperative important for teamwork on long flights?" }
+    expect: "yes"
+  - id: F014
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "i don't know much about pilots, is being cooperative important for teamwork on long flights?" }
+      - { speaker: "Member 1", text: "*pilot, not teamwork" }
+      - { speaker: "Alex", text: "For long flights I think cooperation matters a lot, so A's flying skills are attractive but the teamwork side worries me more now." }
+      - { speaker: "Member 2", text: "working with the co-pilot seems important?" }
+    expect: "no"
+  - id: F015
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "working with the co-pilot seems important?" }
+      - { speaker: "Member 2", text: "What about B?" }
+      - { speaker: "Alex", text: "B is worth a look now, I have that he/she keeps a cool head in crisis situations, which seems very relevant, so I'm open to comparing B with A's teamwork concerns." }
+      - { speaker: "Member 2", text: "You can rely on him 100%, unlike A" }
+    expect: "no"
+  - id: F016
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "You can rely on him 100%, unlike A" }
+      - { speaker: "Member 1", text: "mine: cool head in crisis, can rely on him 100%, assesses weather conditions, good at multitasking" }
+      - { speaker: "Alex", text: "That makes B look solid to me too, weather judgment and multitasking fit with staying calm in a crisis. Anything on B's downsides, or only the two weak points so far?" }
+      - { speaker: "Member 1", text: "but he nags a lot and isn't cooperative" }
+    expect: "no"
+  - id: F017
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "but he nags a lot and isn't cooperative" }
+      - { speaker: "Member 2", text: "He assesses weather conditions well, does that matter much here?" }
+      - { speaker: "Alex", text: "I think reading the weather is useful for a pilot, and B seems stronger than A to me right now because of the reliability and calm in a crisis. Anything else on B's downside, or mainly the tone and cooperation points?" }
+      - { speaker: "Member 2", text: "He gossips about coworkers a lot, that's a bad sign" }
+    expect: "no"
+  - id: F018
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "He gossips about coworkers a lot, that's a bad sign" }
+      - { speaker: "Member 2", text: "Also, he has a below-average memory for numbers" }
+      - { speaker: "Alex", text: "The gossiping and the weak memory for numbers make B look a bit less clean to me, even with the calm and weather judgment. Does anyone have D's pluses or minuses yet?" }
+      - { speaker: "Member 1", text: "if you can rely on him 100% and he multitasks well, then the nagging and not cooperating seem acceptable" }
+    expect: "no"
+  - id: F019
+    named: true
+    alex_answered: true
+    context:
+      - { speaker: "Member 1", text: "if you can rely on him 100% and he multitasks well, then the nagging and not cooperating seem acceptable" }
+      - { speaker: "Member 1", text: "what does memory for numbers mean here?" }
+      - { speaker: "Alex", text: "I meant a weak memory for numbers could matter in a cockpit, but overall B still seems strong on the flying side; if anyone has D's traits, I'd like to hear them first." }
+      - { speaker: "Member 2", text: "Alex, what do you have on D?" }
+    expect: "yes"
+  - id: F020
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "I meant a weak memory for numbers could matter in a cockpit, but overall B still seems strong on the flying side; if anyone has D's traits, I'd like to hear them first." }
+      - { speaker: "Member 2", text: "Alex, what do you have on D?" }
+      - { speaker: "Alex", text: "I have a bit on D and it looks good: can react adequately to unforeseen events and is very responsible. If either of you has more on D, I'd like to hear it before we decide." }
+      - { speaker: "Member 1", text: "mine: can concentrate very well, resilient" }
+    expect: "no"
+  - id: F021
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "mine: can concentrate very well, resilient" }
+      - { speaker: "Member 2", text: "He concentrates very well, is very resilient and responsible" }
+      - { speaker: "Alex", text: "That makes D look steady to me, concentration and resilience go well with responsibility and handling surprises. Any downsides on D, or is that all you have?" }
+      - { speaker: "Member 1", text: "but he's considered arrogant and not well suited for leading a team" }
+    expect: "no"
+  - id: F022
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "but he's considered arrogant and not well suited for leading a team" }
+      - { speaker: "Member 2", text: "on the downside, he's seen as a know-all." }
+      - { speaker: "Alex", text: "That makes D a little rougher on the people side, though the core flying traits still look solid to me. Anything else on D's downside, or is that the main concern?" }
+      - { speaker: "Member 2", text: "and he's quick-tempered." }
+    expect: "no"
+  - id: F023
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "and he's quick-tempered." }
+      - { speaker: "Member 2", text: "Alex, can you compare A, B and C's pluses and minuses?" }
+      - { speaker: "Alex", text: "A still seems strongest on flying alone, but the people and temperament issues add up; B looks steadier overall than A, and I'd want C's traits before ranking it." }
+      - { speaker: "Member 2", text: "you left out D" }
+    expect: "no"
+  - id: F024
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "you left out D" }
+      - { speaker: "Member 1", text: "C pluses: makes the right decisions quickly, stress resistant, promotes a good atmosphere" }
+      - { speaker: "Alex", text: "With D included I'd still lean toward D as the steadiest pick so far, since responsibility and handling unforeseen events seem very relevant. C's quick decisions and stress resistance sound good too, but I'd want the downsides first." }
+      - { speaker: "Member 1", text: "C minuses: not verbally skilful, egocentric, reluctant to take part in training" }
+    expect: "no"
+  - id: F025
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "C minuses: not verbally skilful, egocentric, reluctant to take part in training" }
+      - { speaker: "Member 2", text: "C is very conscientious and skilled with complicated technology" }
+      - { speaker: "Alex", text: "That helps, being very conscientious and skilled with complicated technology makes C look fairly strong to me. Anything else on C's downside, or is that the whole picture?" }
+      - { speaker: "Member 2", text: "To me C has more downsides than the others." }
+    expect: "no"
+  - id: F026
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "To me C has more downsides than the others." }
+      - { speaker: "Member 1", text: "alex could you put together all of A, B, C and D's pluses and minuses? the full picture, not a summary" }
+      - { speaker: "Alex", text: "I can't lay out every profile at once, but from what's been shared I'd still say D looks steadiest, with C next and A and B more mixed because of the people-side concerns." }
+      - { speaker: "Member 1", text: "D is arrogant and not well suited to leading a team" }
+    expect: "no"
+  - id: F027
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "D is arrogant and not well suited to leading a team" }
+      - { speaker: "Member 2", text: "why do you say D looks good overall?" }
+      - { speaker: "Alex", text: "Mainly because D's flying-side traits are reassuring, handling unforeseen events, concentrating very well and being very responsible, so even with the attitude concerns it still reads as the steadiest fit to me." }
+      - { speaker: "Member 2", text: "I think A's flying skills are good as well" }
+    expect: "no"
+  - id: F028
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "I think A's flying skills are good as well" }
+      - { speaker: "Member 1", text: "so everyone seems to have a similar strength: sensing danger / cool head in crisis / quick right decisions / reacting to unforeseen events" }
+      - { speaker: "Alex", text: "Fair, if the core flying side is about even, the overall balance matters more, and C still seems slightly better to me there. Does anyone have one more downside on C, or is reluctance to train the main one?" }
+      - { speaker: "Member 1", text: "so we need to find what sets each candidate apart" }
+    expect: "no"
+  - id: F029
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "what each one has that the others don't" }
+      - { speaker: "Member 2", text: "we're short on time" }
+      - { speaker: "Alex", text: "If we look for what sets them apart, C's quick decisions and strong attention stand out to me, even though the training reluctance is still a real concern." }
+      - { speaker: "Member 1", text: "I'd say B, because cool head, you can rely on him 100%, multitasking, weather assessment" }
+    expect: "no"
+  - id: F030
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "hey" }
+      - { speaker: "Member 2", text: "hey everyone" }
+      - { speaker: "Alex", text: "Hi, I'm leaning toward Candidate D for now, being very responsible seems especially important for a pilot." }
+      - { speaker: "Member 1", text: "yes, I have that too" }
+    expect: "no"
+  - id: F031
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "yes, I have that too" }
+      - { speaker: "Member 1", text: "and adaptable and focused as well" }
+      - { speaker: "Alex", text: "D still looks stronger to me than C, especially reacting adequately to unforeseen events and being very resilient. That keeps D ahead for me." }
+      - { speaker: "Member 2", text: "My card has know-all and quick-tempered as minuses" }
+    expect: "no"
+  - id: F032
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "My card has know-all and quick-tempered as minuses" }
+      - { speaker: "Member 1", text: "I don't have that, it's new to me" }
+      - { speaker: "Alex", text: "That makes D a little less clean, but I'd still put D ahead of C for now, because handling the unexpected and staying resilient fit the role better than C's weaker communication. I also have D as concentrating very well." }
+      - { speaker: "Member 1", text: "What's on your card for C?" }
+    expect: "yes"
+  - id: F033
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "What's on your card for C?" }
+      - { speaker: "Member 2", text: "right, why does C look weak" }
+      - { speaker: "Alex", text: "My main concern with C is being reluctant to take part in training, which seems like a real drawback for a pilot." }
+      - { speaker: "Member 1", text: "I have that too. I thought C was the weakest" }
+    expect: "no"
+  - id: F034
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I have that too. I thought C was the weakest" }
+      - { speaker: "Member 1", text: "not because of one trait, but because C only has 3 pluses" }
+      - { speaker: "Alex", text: "C does look weaker than D to me as well, and the reluctance to train pulls it down most. C not being verbally skillful also makes it less solid than D, even with some good judgment and safety instincts." }
+      - { speaker: "Member 2", text: "hold on, judgment and safety? that's new to me. I have decisive, conscientious and good with tech." }
+    expect: "no"
+  - id: F035
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "hold on, judgment and safety? that's new to me. I have decisive, conscientious and good with tech." }
+      - { speaker: "Member 1", text: "I have decisive too, plus stress-resistant and team-spirited" }
+      - { speaker: "Alex", text: "C looks better than B to me right now, because quick decisions and putting safety first suit a pilot better than B's attitude problems. I also have C as performing very well in sustained attention." }
+      - { speaker: "Member 1", text: "Oh, C has a lot of new good points" }
+    expect: "no"
+  - id: F036
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Oh, C has a lot of new good points" }
+      - { speaker: "Member 2", text: "but Alex, you said D so far, why did you suddenly compare with B???" }
+      - { speaker: "Alex", text: "Good point, I was placing C relative to the others, but I still think D is the cleaner pick because it handles unexpected situations well and is very responsible." }
+      - { speaker: "Member 2", text: "ok got it" }
+    expect: "no"
+  - id: F037
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "ok got it" }
+      - { speaker: "Member 1", text: "right." }
+      - { speaker: "Alex", text: "That is still my view, D seems the safest fit because it combines responsibility with staying steady when things are unpredictable." }
+      - { speaker: "Member 1", text: "you said C was best... which one are you leaning to??" }
+    expect: "yes"
+  - id: F038
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "you said C was best... which one are you leaning to??" }
+      - { speaker: "Member 2", text: "I think C is better than D" }
+      - { speaker: "Alex", text: "C now looks stronger than D to me, mainly because safety-first judgment and sustained attention make a better mix than D's steadiness alone. D is still solid, but C looks a bit cleaner." }
+      - { speaker: "Member 2", text: "ok so you're saying C" }
+    expect: "no"
+  - id: F039
+    named: true
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "ok so you're saying C" }
+      - { speaker: "Member 1", text: "C seems fine to me" }
+      - { speaker: "Alex", text: "C still edges out D for me, quick safety-first decisions plus sustained attention seem stronger than D's steadiness alone. D is still solid, but C looks cleaner from what we have." }
+      - { speaker: "Member 1", text: "Alex, what about A?" }
+    expect: "yes"
+  - id: F040
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "C still edges out D for me, quick safety-first decisions plus sustained attention seem stronger than D's steadiness alone. D is still solid, but C looks cleaner from what we have." }
+      - { speaker: "Member 1", text: "Alex, what about A?" }
+      - { speaker: "Alex", text: "A looks strong to me too, especially the good overview of complex contexts and excellent spatial awareness." }
+      - { speaker: "Member 2", text: "That matches mine. I have that A is well organized" }
+    expect: "no"
+  - id: F041
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "hey" }
+      - { speaker: "Member 2", text: "hey" }
+      - { speaker: "Alex", text: "Hi, I'm leaning toward Candidate D for now, being very responsible seems especially important for a pilot." }
+      - { speaker: "Member 1", text: "ok yes, I have that one too." }
+    expect: "no"
+  - id: F042
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "ok yes, I have that one too." }
+      - { speaker: "Member 2", text: "yes D is responsible" }
+      - { speaker: "Alex", text: "D still looks stronger than B to me, because D stays composed under pressure and reacts well to the unexpected. That makes D the steadier pick for now." }
+      - { speaker: "Member 2", text: "What's on your card for D? why are you so sure?" }
+    expect: "yes"
+  - id: F043
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "Hi, shall we begin?" }
+    expect: "no"
+  - id: F044
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Hi, shall we begin?" }
+      - { speaker: "Member 2", text: "Sure" }
+      - { speaker: "Alex", text: "Sure, let's begin with Candidate A, since there's already a good sign there of situational awareness and organization." }
+      - { speaker: "Member 1", text: "Yes, I have similar ones, plus spatial awareness" }
+    expect: "no"
+  - id: F045
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Yes, I have similar ones, plus spatial awareness" }
+      - { speaker: "Member 2", text: "Same, and A is good at sensing danger" }
+      - { speaker: "Alex", text: "That fits A well, danger awareness and spatial awareness make a strong pilot profile, and I also have that A has a good overview of complex contexts. What else do we have on A before moving on?" }
+      - { speaker: "Member 1", text: "A can't take criticism, that's a minus" }
+    expect: "no"
+  - id: F046
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "A can't take criticism, that's a minus" }
+      - { speaker: "Member 2", text: "I don't have that one" }
+      - { speaker: "Alex", text: "That's useful. If A is strong on awareness and organization, I'd still like to know whether there's another downside besides being unfriendly. Anything else on A, or should we move on?" }
+      - { speaker: "Member 2", text: "hold on, unfriendly? I don't have that." }
+    expect: "yes"
+  - id: F047
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "hold on, unfriendly? I don't have that." }
+      - { speaker: "Member 2", text: "I only have show-off and not open to new ideas." }
+      - { speaker: "Alex", text: "That helps, a show-off streak and not being open to new ideas make the people side rougher than it first looked. Does anyone have one more trait on A, or should we move to B?" }
+      - { speaker: "Member 1", text: "I do have one" }
+    expect: "no"
+  - id: F048
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I do have one" }
+      - { speaker: "Member 1", text: "A's downside: A is hectic" }
+      - { speaker: "Alex", text: "Got it, that's another rough edge for A, and with the people-side and restlessness issues adding up, I think we've covered A for now. What do we have on B beyond reliable and calm under pressure?" }
+      - { speaker: "Member 1", text: "I have those two already. And B judges the weather well" }
+    expect: "no"
+  - id: F049
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I have those two already. And B judges the weather well" }
+      - { speaker: "Member 2", text: "Mine are the same. strange" }
+      - { speaker: "Alex", text: "Let's pause and look at the board. From what we have, it's still open; nobody has clearly pulled ahead, so let's dig a bit more before deciding." }
+      - { speaker: "Member 2", text: "And B's downsides?" }
+    expect: "yes"
+  - id: F050
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "Does either of you have one?" }
+      - { speaker: "Member 2", text: "I have bad memory for numbers and gossips" }
+      - { speaker: "Alex", text: "That's useful on B, a weak memory for numbers matters for a pilot and the gossip doesn't help trust. Anything else on B, or should we compare with C and D now?" }
+      - { speaker: "Member 1", text: "I have more. B nags and isn't cooperative." }
+    expect: "no"
+  - id: F051
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I have more. B nags and isn't cooperative." }
+      - { speaker: "Member 1", text: "Both A and B seem to have many downsides" }
+      - { speaker: "Alex", text: "B is looking rough on the downside, so I'd move on unless someone has a missing strength that changes things. What do we have on C or D, especially anything that separates them?" }
+      - { speaker: "Member 1", text: "I don't have anything else on B." }
+    expect: "no"
+  - id: F052
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I don't have anything else on B." }
+      - { speaker: "Member 1", text: "C or D, which should we do first?" }
+      - { speaker: "Alex", text: "Let's do C first, since I have a strong safety and decision-making signal there, and then see whether D still comes out ahead." }
+      - { speaker: "Member 2", text: "Works for me" }
+    expect: "no"
+  - id: F053
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "Works for me" }
+      - { speaker: "Member 2", text: "For C I have decisive, conscientious and good with complex tech. C looks weakest to me, only 3 pluses." }
+      - { speaker: "Alex", text: "That's a fair read on C, but I'd still like the downsides before ruling it out; I have that C is reluctant to train, which matters. Anything else on C, or should we go to D?" }
+      - { speaker: "Member 1", text: "hold on, I have decisive as a plus but not the other two. mine are stress-resistant and team-spirited." }
+    expect: "no"
+  - id: F054
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "hold on, I have decisive as a plus but not the other two. mine are stress-resistant and team-spirited." }
+      - { speaker: "Member 1", text: "Alex, what pluses do you have for C?" }
+      - { speaker: "Alex", text: "I have that C makes the right decisions very quickly, puts safety first and performs well in sustained attention." }
+      - { speaker: "Member 1", text: "Those are all new." }
+    expect: "no"
+  - id: F055
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Those are all new." }
+      - { speaker: "Member 2", text: "Right." }
+      - { speaker: "Alex", text: "C sounds stronger than it first did, especially the quick decisions and safety first, so I'd like D's traits before we rule anything out." }
+      - { speaker: "Member 2", text: "Should we go over C's downsides too?" }
+    expect: "yes"
+  - id: F056
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "Should we go over C's downsides too?" }
+      - { speaker: "Member 1", text: "Yes, I agree" }
+      - { speaker: "Alex", text: "Yes, C's downsides matter, especially anything about training or judgment under pressure, so let's get those out before comparing with D." }
+      - { speaker: "Member 1", text: "Mine: not verbally skillful, egocentric, avoids training." }
+    expect: "no"
+  - id: F057
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "Mine: not verbally skillful, egocentric, avoids training." }
+      - { speaker: "Member 2", text: "Same here. Is that what you have too, Alex?" }
+      - { speaker: "Alex", text: "Yes, that matches what I have for C, and avoiding training worries me most for a pilot. If C's downsides are covered, I'd move to D next." }
+      - { speaker: "Member 2", text: "Great" }
+    expect: "no"
+  - id: F058
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "Great" }
+      - { speaker: "Member 1", text: "Ok, for D I have adaptable, focused, resilient" }
+      - { speaker: "Alex", text: "That fits what I have on D, especially being very responsible, which is a big plus. If anyone has a downside on D, that's the last thing I'd want before comparing with C." }
+      - { speaker: "Member 2", text: "Same as mine. One more: responsible." }
+    expect: "no"
+  - id: F059
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "Same as mine. One more: responsible." }
+      - { speaker: "Member 1", text: "And the negatives?" }
+      - { speaker: "Alex", text: "The downside I have on D is being considered moody, which I'd weigh against the reliability and resilience. If nobody has more on D, we're close to choosing between D and C." }
+      - { speaker: "Member 1", text: "hold on, I don't have moody. I have arrogant and not a good team leader." }
+    expect: "no"
+  - id: F060
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "hold on, I don't have moody. I have arrogant and not a good team leader." }
+      - { speaker: "Member 2", text: "I don't have any of those. Mine are know-all and quick-tempered" }
+      - { speaker: "Alex", text: "We don't agree on D's downsides yet, so let's not rush; we have a good picture of C and a fair one of D, but the board isn't complete. Participant X, what do you have on Candidate B?" }
+      - { speaker: "Member 1", text: "I think I already said everything" }
+    expect: "no"
+  - id: F061
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I think I already said everything" }
+      - { speaker: "Member 2", text: "why are you going back to B? any reason?" }
+      - { speaker: "Alex", text: "I'm going back to B because we have a lot on C and D, but D's downsides are unclear and B may still have a missing piece. What else do you have on B, especially anything not yet mentioned?" }
+      - { speaker: "Member 1", text: "What B traits have we already listed? I'm lost" }
+    expect: "no"
+  - id: F062
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "What B traits have we already listed? I'm lost" }
+      - { speaker: "Member 2", text: "What's the rule for deciding?" }
+      - { speaker: "Alex", text: "We go by the overall balance of pluses and minuses, so I don't want to settle on one candidate too early. B looks rough on the downside, C has strong pluses but a training concern, and D's negatives still need sorting out. What else do we have on D?" }
+      - { speaker: "Member 1", text: "I think I've shared everything." }
+    expect: "no"
+  - id: F063
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "Hey" }
+      - { speaker: "Member 1", text: "Alex, how's it going?" }
+      - { speaker: "Alex", text: "Fine, thanks. On the candidates, D still looks slightly stronger than A to me because steady concentration and responsibility outweigh A's mixed people side, though A is close thanks to situational awareness." }
+      - { speaker: "Member 2", text: "A is good at sensing danger" }
+    expect: "no"
+  - id: F064
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Alex", text: "Fine, thanks. On the candidates, D still looks slightly stronger than A to me because steady concentration and responsibility outweigh A's mixed people side, though A is close thanks to situational awareness." }
+      - { speaker: "Member 2", text: "A is good at sensing danger" }
+      - { speaker: "Alex", text: "A does have danger awareness, which is a real plus against D, but D still seems a little stronger overall because responsibility and resilience fit pilot work better than A being unfriendly and restless." }
+      - { speaker: "Member 1", text: "Y, what do you have on Candidate B?" }
+    expect: "no"
+  - id: F065
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "Ok, let's begin" }
+    expect: "no"
+  - id: F066
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "Ok, let's begin" }
+      - { speaker: "Alex", text: "Good, let's start with the candidate who looks most balanced. What do we know about D beyond the basics, especially anything that offsets the rough edges?" }
+      - { speaker: "Member 2", text: "I think D is good overall but quick tempered" }
+    expect: "no"
+  - id: F067
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 1", text: "From my card, he reacts adequately to the unexpected" }
+      - { speaker: "Member 1", text: "and he concentrates very well" }
+      - { speaker: "Alex", text: "Got it, that helps. Let's see whether the temper affects teamwork or consistency." }
+      - { speaker: "Member 2", text: "right" }
+    expect: "no"
+  - id: F068
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Got it, that helps. Let's see whether the temper affects teamwork or consistency." }
+      - { speaker: "Member 2", text: "right" }
+      - { speaker: "Alex", text: "That's useful, D's steadiness under pressure comes through, but I'd like to know whether there's more on the rough side beyond the temper. What else do we know about D's judgment or reliability?" }
+      - { speaker: "Member 1", text: "He's also considered arrogant" }
+    expect: "no"
+  - id: F069
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "acts like a know-all" }
+      - { speaker: "Member 1", text: "that's quite bad for teamwork" }
+      - { speaker: "Alex", text: "Let's not settle on D too fast, the whole field is still open and I want to compare everyone side by side. Participant Y, what do you have on C?" }
+      - { speaker: "Member 2", text: "C is the weakest to me. Quick decisions, but egocentric and avoids training!!" }
+    expect: "no"
+  - id: F070
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "quick decisions help sometimes, but in emergencies accuracy matters too" }
+      - { speaker: "Member 1", text: "C has a lot of minuses for me" }
+      - { speaker: "Alex", text: "We're focusing too much on C and D, and A and B still need to be weighed against what we've heard. What else do we know about A or B?" }
+      - { speaker: "Member 1", text: "We haven't covered D's good side yet, is that fine?" }
+    expect: "yes"
+  - id: F071
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "We're focusing too much on C and D, and A and B still need to be weighed against what we've heard. What else do we know about A or B?" }
+      - { speaker: "Member 1", text: "We haven't covered D's good side yet, is that fine?" }
+      - { speaker: "Alex", text: "Yes, let's keep the whole field open and not let D or C push out A and B. I'd still like the missing pieces on A; Participant Y, what do you have on Candidate A?" }
+      - { speaker: "Member 2", text: "A is the best to me. Good at sensing danger, great spatial awareness and well organized." }
+    expect: "no"
+  - id: F072
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "A is the best to me. Good at sensing danger, great spatial awareness and well organized." }
+      - { speaker: "Member 1", text: "But A doesn't tolerate criticism" }
+      - { speaker: "Alex", text: "Let's pause and check the board. From what we've heard, B looks like the strongest fit, while A, C and D are behind or have clear concerns." }
+      - { speaker: "Member 1", text: "that matters a lot for the team" }
+    expect: "no"
+  - id: F073
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's pause and check the board. From what we've heard, B looks like the strongest fit, while A, C and D are behind or have clear concerns." }
+      - { speaker: "Member 1", text: "that matters a lot for the team" }
+      - { speaker: "Alex", text: "I hear you, that's an important concern. Let's still check the remaining gaps before deciding." }
+      - { speaker: "Member 2", text: "ok" }
+    expect: "no"
+  - id: F074
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "ok" }
+      - { speaker: "Member 1", text: "Alex, are you listening to my view too?" }
+      - { speaker: "Alex", text: "I am, and I want to hear the rest. What's the strongest point you have on B, and is there anything on A that would put it back in front?" }
+      - { speaker: "Member 2", text: "but D is egocentric too" }
+    expect: "no"
+  - id: F075
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "I am, and I want to hear the rest. What's the strongest point you have on B, and is there anything on A that would put it back in front?" }
+      - { speaker: "Member 2", text: "but D is egocentric too" }
+      - { speaker: "Alex", text: "We're not done if B hasn't really been covered; I don't want to decide only from the negatives on A, C or D. Can we hear what B brings? Participant X, what do you have on Candidate B?" }
+      - { speaker: "Member 1", text: "He keeps a cool head in crisis situations, which is great, you can rely on him 100%, and he assesses weather conditions very well. That's one of the key ones." }
+    expect: "no"
+  - id: F076
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 1", text: "He keeps a cool head in crisis situations, which is great, you can rely on him 100%, and he assesses weather conditions very well. That's one of the key ones." }
+      - { speaker: "Member 1", text: "But he isn't very cooperative" }
+      - { speaker: "Alex", text: "That's a strong case for B, exactly what I hoped would come out. What about B's rough side, is cooperation the main concern or is there more?" }
+      - { speaker: "Member 2", text: "I hear B is good at multitasking, a clear strength, and that you can rely on him 100%. But nobody is 100% reliable, and he has a below-average memory for numbers! How can we trust that" }
+    expect: "no"
+  - id: F077
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "That's a strong case for B, exactly what I hoped would come out. What about B's rough side, is cooperation the main concern or is there more?" }
+      - { speaker: "Member 2", text: "I hear B is good at multitasking, a clear strength, and that you can rely on him 100%. But nobody is 100% reliable, and he has a below-average memory for numbers! How can we trust that" }
+      - { speaker: "Alex", text: "Let's take stock. From what's been shared, A looks like the strongest fit overall, and the others are behind or have concerns that keep them back." }
+      - { speaker: "Member 2", text: "I think so too." }
+    expect: "no"
+  - id: F078
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "I think so too." }
+      - { speaker: "Member 1", text: "Alex, what do you think about Candidate B? our cards differ" }
+      - { speaker: "Alex", text: "B still has a good case, but I'm not ready to put it ahead of A. A's profile is still the cleanest from what we have; what else on B's downside should we weigh?" }
+      - { speaker: "Member 1", text: "do you think B is fully reliable?" }
+    expect: "yes"
+  - id: F079
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "B still has a good case, but I'm not ready to put it ahead of A. A's profile is still the cleanest from what we have; what else on B's downside should we weigh?" }
+      - { speaker: "Member 1", text: "do you think B is fully reliable?" }
+      - { speaker: "Alex", text: "I wouldn't call anyone fully reliable, but B still seems solid. Next I'd like to know whether anyone has more on A's downside, since that could change the lead for me." }
+      - { speaker: "Member 1", text: "he's well organized and has excellent spatial awareness" }
+    expect: "no"
+  - id: F080
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "Sure, where should we start?" }
+    expect: "no"
+  - id: F081
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "Hmm, A is good at recognizing dangerous situations" }
+      - { speaker: "Member 2", text: "there were 4 pluses" }
+      - { speaker: "Alex", text: "Good. Only A has come up so far, so let's not narrow too early and keep B, C and D in view. Could you share any pluses or concerns you see for the other candidates?" }
+      - { speaker: "Member 1", text: "I had the danger one too" }
+    expect: "no"
+  - id: F082
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "B stays calm in a crisis, it says" }
+      - { speaker: "Member 2", text: "I had that as well" }
+      - { speaker: "Alex", text: "Good. A has more pluses showing so far, but only a little of B is out, so it's early to judge the whole field. Any strengths or concerns for C or D?" }
+      - { speaker: "Member 2", text: "For C there was making decisions quickly" }
+    expect: "no"
+  - id: F083
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "and conscientious" }
+      - { speaker: "Member 1", text: "I didn't see conscientious?" }
+      - { speaker: "Alex", text: "Only parts of A, B and C are out, so it's too early to lean one way; let's look at all four including D. C showed quick decisions; does anyone have pluses or concerns for D?" }
+      - { speaker: "Member 2", text: "D concentrates well, apparently" }
+    expect: "no"
+  - id: F084
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "being a know-all was a downside" }
+      - { speaker: "Member 1", text: "I had arrogant for D" }
+      - { speaker: "Alex", text: "Let's look at all four again. A shows quite a few pluses, B needs more checking, and C and D each have strengths and concerns, so let's not narrow yet. Participant Y, what else do you have on B?" }
+      - { speaker: "Member 2", text: "Hmm.. where were we" }
+    expect: "no"
+  - id: F085
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "There was being reliable" }
+      - { speaker: "Member 1", text: "yes, me too" }
+      - { speaker: "Alex", text: "Good, reliability for B is on both your cards. Let's check A, C and D against the same standard once more." }
+      - { speaker: "Member 1", text: "and he's bad at judging the weather" }
+    expect: "no"
+  - id: F086
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "and he's bad at judging the weather" }
+      - { speaker: "Member 1", text: "good, I mean" }
+      - { speaker: "Alex", text: "B looks fairly solid now, but A and D are still very much in it, so let's not narrow to one too soon. Does anyone know more pluses for A or D, or more concerns for C?" }
+      - { speaker: "Member 2", text: "What I said for A was similar, there was also well organized" }
+    expect: "no"
+  - id: F087
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "C isn't a good speaker?" }
+      - { speaker: "Member 2", text: "and egocentric" }
+      - { speaker: "Alex", text: "B looks ahead now, but A and D are still competitive and C has both sides, so let's not close too early. Let's look at all four on the same line and check more about B. Participant X, do you have more on B?" }
+      - { speaker: "Member 1", text: "B nags a lot" }
+    expect: "no"
+  - id: F088
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "B nags a lot" }
+      - { speaker: "Member 1", text: "and isn't cooperative" }
+      - { speaker: "Alex", text: "From what's been said, B has pluses but also some clear concerns. Is there anything new on A or D's pluses, or C's remaining minuses?" }
+      - { speaker: "Member 2", text: "C being egocentric" }
+    expect: "no"
+  - id: F089
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "C being egocentric" }
+      - { speaker: "Member 2", text: "and conscientious" }
+      - { speaker: "Alex", text: "B now shows some weak spots, and C is mixed too, so it's early to settle on one. Does anyone know more strengths for A and D, or concerns for D?" }
+      - { speaker: "Member 1", text: "so where do we stand overall?" }
+    expect: "yes"
+  - id: F090
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "so where do we stand overall?" }
+      - { speaker: "Member 1", text: "Alex, where do we stand overall?" }
+      - { speaker: "Alex", text: "A still looks most stable, and B has pluses but enough concerns to wobble. D needs more checking and C is mixed. Does anyone have more strengths for A or D?" }
+      - { speaker: "Member 2", text: "I think I've said everything" }
+    expect: "no"
+  - id: F091
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 2", text: "I think I've said everything" }
+      - { speaker: "Member 1", text: "me too" }
+      - { speaker: "Alex", text: "Then A seems to be ahead for now. D still has some loose ends, so shall we check one last time for any more pluses or concerns on D?" }
+      - { speaker: "Member 2", text: "Hmm... nothing more on D from me" }
+    expect: "no"
+  - id: F092
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Then A seems to be ahead for now. D still has some loose ends, so shall we check one last time for any more pluses or concerns on D?" }
+      - { speaker: "Member 2", text: "Hmm... nothing more on D from me" }
+      - { speaker: "Alex", text: "Then A seems the natural choice for now. A has a solid set of pluses and the others look more mixed. Does anyone know any last concern about A?" }
+      - { speaker: "Member 1", text: "not sure about A either" }
+    expect: "no"
+  - id: F093
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 1", text: "not sure about A either" }
+      - { speaker: "Member 2", text: "me neither on A" }
+      - { speaker: "Alex", text: "Let's keep all four open. A still looks most stable, but B keeps showing reliability and C and D each have pluses and concerns, so let's not close too soon. Anything new on B or D's pluses, or C's minuses?" }
+      - { speaker: "Member 2", text: "nothing more on C, that's everything" }
+    expect: "no"
+  - id: F094
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's keep all four open. A still looks most stable, but B keeps showing reliability and C and D each have pluses and concerns, so let's not close too soon. Anything new on B or D's pluses, or C's minuses?" }
+      - { speaker: "Member 2", text: "nothing more on C, that's everything" }
+      - { speaker: "Alex", text: "We now have pluses and minuses for A, B, C and D. A looks fairly safe, B keeps showing reliability, and C and D are not out either. Rather than extend this, please decide together as a team and press Exit & Make Team Decision." }
+      - { speaker: "Member 1", text: "So which one should we pick?" }
+    expect: "no"
+  - id: F095
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "For A, good at sensing danger" }
+    expect: "no"
+  - id: F096
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "For A, good at sensing danger" }
+      - { speaker: "Member 1", text: "And sees the big picture well" }
+      - { speaker: "Alex", text: "A already looks stronger than C on balance, since danger awareness and big-picture thinking fit together, while C has more friction on the downside. I'd keep A ahead for now while keeping the full set in view." }
+      - { speaker: "Member 2", text: "I have the same" }
+    expect: "no"
+  - id: F097
+    named: false
+    alex_answered: true
+    context:
+      - { speaker: "Member 1", text: "Oh, we have the same ones" }
+      - { speaker: "Member 1", text: "What about the negatives" }
+      - { speaker: "Alex", text: "The field is still open, so let's widen out rather than lock onto A or B. Both look solid, but D is still in it and C shouldn't be dropped just because its rough edges are more visible. Participant Y, your turn." }
+      - { speaker: "Member 2", text: "What do you have for A and B?" }
+    expect: "yes"
+  - id: F098
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "The field is still open, so let's widen out rather than lock onto A or B. Both look solid, but D is still in it and C shouldn't be dropped just because its rough edges are more visible. Participant Y, your turn." }
+      - { speaker: "Member 2", text: "What do you have for A and B?" }
+      - { speaker: "Alex", text: "For A I have recognizing danger, a good overview, spatial awareness and being very well organized, with the downsides of being unfriendly and transmitting restlessness. For B, staying cool in a crisis, full reliability, weather judgment and multitasking, against being considered arrogant and sometimes abusive in tone, so B is the cleaner pick over A for now." }
+      - { speaker: "Member 2", text: "Talking of D, I have adaptable, focused, resilient" }
+    expect: "no"
+  - id: F099
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "ok, so A is good at sensing danger" }
+    expect: "no"
+  - id: F100
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "ok, so A is good at sensing danger" }
+      - { speaker: "Member 1", text: "and well organized" }
+      - { speaker: "Alex", text: "Good, A looks fairly solid from what's been said. Does anyone have more on A, especially other strengths or things to weigh with them?" }
+      - { speaker: "Member 2", text: "not sure about A, but B is calm in a crisis and reliable" }
+    expect: "no"
+  - id: F101
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "and resilient too" }
+      - { speaker: "Member 2", text: "I think I had that too" }
+      - { speaker: "Alex", text: "Only A, B and D have come up and C barely, so it's early to narrow. Each candidate has pluses and minuses, so let's fill in C as well and compare. Participant X, what do you know about Candidate C?" }
+      - { speaker: "Member 1", text: "C seemed to have a lot of bad points" }
+    expect: "no"
+  - id: F102
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "not a good speaker and egocentric" }
+      - { speaker: "Member 1", text: "doesn't like training either" }
+      - { speaker: "Alex", text: "Good, now C is in too, so let's look at all four again. Rather than picking one, let's weigh A, B and D's strengths and C's weaknesses together; does anyone have more on B or D, especially pluses or minuses not mentioned yet?" }
+      - { speaker: "Member 2", text: "that's how C seemed to me" }
+    expect: "no"
+  - id: F103
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "don't A or B look good?" }
+      - { speaker: "Member 2", text: "they do" }
+      - { speaker: "Alex", text: "Right, from what's been said A and B stand out a bit more. Next, let's check whether anything makes the difference between them clearer." }
+      - { speaker: "Member 1", text: "my C is stress resistant" }
+    expect: "no"
+  - id: F104
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "my C is stress resistant" }
+      - { speaker: "Member 2", text: "I don't think I saw that" }
+      - { speaker: "Alex", text: "Let's look at A, B, C and D broadly again. A still has some gaps, and B and D may have missing information too, so let's fill in the whole picture once more. Participant X, what else do you know about Candidate A?" }
+      - { speaker: "Member 1", text: "that's all I have on A, can't recall more" }
+    expect: "no"
+  - id: F105
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "C is conscientious and good with complex technology, it said" }
+      - { speaker: "Member 2", text: "C seems to have a lot of new info?" }
+      - { speaker: "Alex", text: "Yes, more about C has come in. Let's line up A, B, C and D again and check first the candidates with gaps." }
+      - { speaker: "Member 1", text: "D is a bit arrogant" }
+    expect: "no"
+  - id: F106
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "D is a bit arrogant" }
+      - { speaker: "Member 1", text: "and not good at leading a team" }
+      - { speaker: "Alex", text: "With D's weaknesses out, let's look at all four in balance. A and B show good pluses but have gaps, and C has new points mixed in, so it's early to narrow. Any weaknesses or strengths for A or B not yet mentioned?" }
+      - { speaker: "Member 2", text: "A is a show-off, it said" }
+    expect: "no"
+  - id: F107
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "A doesn't take new ideas well" }
+      - { speaker: "Member 1", text: "Not sure. Alex, how does it look to you so far?" }
+      - { speaker: "Alex", text: "A has pluses, but its new weaknesses matter, and B still looks fairly balanced. I'd put B slightly ahead for now; shall we check once more for any strengths or weaknesses on D or C?" }
+      - { speaker: "Member 2", text: "that's all I have" }
+    expect: "no"
+  - id: F108
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "that's all I have" }
+      - { speaker: "Member 1", text: "yes, that's all from me too. nothing more" }
+      - { speaker: "Alex", text: "B looks ahead, but D and C aren't ruled out. Is there anything on D beyond responsibility and resilience, or any strength for C that offsets the weaknesses?" }
+      - { speaker: "Member 2", text: "I really have nothing" }
+    expect: "no"
+  - id: F109
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Alex", text: "Let's get started. We'll go through the four candidates together — let's each lay out what we know so we have the full picture before we decide." }
+      - { speaker: "Member 1", text: "ok, I have that A is good at sensing danger" }
+    expect: "no"
+  - id: F110
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "ok, I have that A is good at sensing danger" }
+      - { speaker: "Member 2", text: "don't remember A well, but someone is calm in a crisis" }
+      - { speaker: "Alex", text: "A looks solid from danger awareness and crisis handling. Still, let's not drop B or D too soon; D's steadiness is worth comparing directly with A." }
+      - { speaker: "Member 2", text: "oh, the crisis one was B" }
+    expect: "no"
+  - id: F111
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "I think A was well organized" }
+      - { speaker: "Member 2", text: "hmm.. D is very responsible" }
+      - { speaker: "Alex", text: "A, B and D are all still in it and C should stay open too. A is strong on organization and danger awareness, D is clearly steady, and B is calm in a crisis, so it's early to drop anyone. Participant X, your turn." }
+      - { speaker: "Member 2", text: "and he recovers quickly" }
+    expect: "no"
+  - id: F112
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "hmm.. I can't recall" }
+      - { speaker: "Member 2", text: "C looked the weakest though" }
+      - { speaker: "Alex", text: "Rather than dropping C quickly, let's keep A, B and D in view too. C has weak points but also quick decisions and safety first; A has organization and danger awareness, B crisis calm, and D responsibility and steadiness, so let's keep comparing the full set." }
+      - { speaker: "Member 1", text: "what I remember from C is not a good speaker and egocentric" }
+    expect: "no"
+  - id: F113
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "didn't like training either" }
+      - { speaker: "Member 2", text: "right" }
+      - { speaker: "Alex", text: "C's weaknesses are clearer now, but rather than closing it, let's keep comparing with A, B and D. A is strong on organization and danger awareness, B is calm in a crisis, and D is responsible and steady. Participant X, your turn." }
+      - { speaker: "Member 1", text: "I can't remember, let me think" }
+    expect: "no"
+  - id: F114
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 1", text: "for me it's A or B" }
+      - { speaker: "Member 2", text: "I think C was conscientious" }
+      - { speaker: "Alex", text: "More about C has come up, but that's not a reason to drop the rest. A keeps showing danger awareness and organization, B's crisis calm keeps it ahead of C, and D's responsibility means it stays in the comparison." }
+      - { speaker: "Member 2", text: "and good with complex technology, it said" }
+    expect: "no"
+  - id: F115
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "is C coming up a lot now?" }
+      - { speaker: "Member 2", text: "what do I remember about D?" }
+      - { speaker: "Alex", text: "More about C has built up, which is why we should line up A, B and D again. C shows quick decisions and safety first but clear weaknesses in speaking and training, while A's danger awareness and organization still look solid next to C." }
+      - { speaker: "Member 1", text: "so who's ahead now?" }
+    expect: "no"
+  - id: F116
+    named: false
+    alex_answered: false
+    context:
+      - { speaker: "Member 2", text: "and doesn't take new ideas well" }
+      - { speaker: "Member 1", text: "Alex, what do you think?" }
+      - { speaker: "Alex", text: "A looks furthest ahead. C has good points but more weaknesses showed, and B and D are fine, but A combines danger awareness and organization for a better overall balance." }
+      - { speaker: "Member 2", text: "so should we go with A?" }
+    expect: "no"
